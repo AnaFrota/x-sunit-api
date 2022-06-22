@@ -14,3 +14,5 @@ class Survivor < ApplicationRecord
       def self.report_non_abducted
         (Survivor.where(abducted: false).size / Survivor.all.size) * 100
       end
+
+    end

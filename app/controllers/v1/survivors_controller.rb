@@ -1,41 +1,37 @@
 module V1
     class SurvivorsController < ApplicationController
-      before_action :set_survivor, only: %i[show update destroy]
+      before_action :set_survivor, only: %i[show update destroy report_abduction]
 
       def index
-        survivors = Survivor.order('created_at DESC')
-        render json: { status: 'SUCCESS', data: survivors }, status: :ok
         @survivors = Survivor.order('created_at DESC')
         render json: { status: 'SUCCESS', data: @survivors }, status: :ok
       end
 
       def show
-        @survivor = Survivor.find(params[:id])
         render json: { status: 'SUCCESS', data: @survivor }, status: :ok
       end
 
       def create
         @survivor = Survivor.new(survivor_params)
         if @survivor.save
-          render json: { status: 'SUCCESS', message: 'Saved survivor', data: @survivor }, status: :ok
+          render json: { status: 'SUCCESS', message: 'Registered survivor successfully!
+            ', data: @survivor }, status: 201
         else
-          render json: { status: 'ERROR', message: 'Survivor not saved', data: @survivor.errors },
+          render json: { status: 'ERROR', message: 'Failed to resgistered survivor.', data: @survivor.errors },
                  status: :unprocessable_entity
         end
       end
 
       def destroy
-        @survivor = Survivor.find(params[:id])
         @survivor.destroy
-        render json: { status: 'SUCCESS', message: 'Deleted survivor', data: @survivor }, status: :ok
+        render json: { status: 'SUCCESS', message: 'Survivor deleted successfully!', data: @survivor }, status: 204
       end
 
       def update
-        @survivor = Survivor.find(params[:id])
-        if @survivor.update_attributes(survivor_params)
-          render json: { status: 'SUCCESS', message: 'Updated survivor', data: @survivor }, status: :ok
+        if @survivor.update(survivor_params_up)
+          render json: { status: 'SUCCESS', message: 'Survivor update successfully!', data: @survivor }, status: :ok
         else
-          render json: { status: 'ERROR', message: 'Survivor not update', data: @survivor.errors },
+          render json: { status: 'ERROR', message: 'Failed to updated survivor.', data: @survivor.errors },
                  status: :unprocessable_entity
         end
       end
@@ -51,8 +47,16 @@ module V1
       end
 
       def show_alphabetic_order
-        @survivors = Survivor.order(:name)
-        render json: { status: 'SUCCESS', data: @survivors }, status: :ok
+        render json: { status: 'SUCCESS', data: Survivor.order(:name) }, status: :ok
+      end
+
+      def report_abduction
+        @report = @survivor.reporting(params[:id_rep])
+        if @report
+          render json: { status: 'SUCCESS', message: 'Report received' }, status: :ok
+        else
+          render json: { status: 'ERROR', message: 'You cant report this survivor' }, status: :unprocessable_entity
+        end
       end
 
       private
@@ -63,6 +67,11 @@ module V1
 
       def survivor_params
         params.require(:survivor).permit(:name, :birthdate, :gender, :latitude,
-                                         :longitude, :reports_received, :abducted)
+                                         :longitude, :reports, :abducted)
+      end
+
+      def survivor_params_up
+        params.require(:survivor).permit(:latitude, :longitude)
       end
     end
+  end
