@@ -8,11 +8,10 @@ class Survivor < ApplicationRecord
     validates :reports, numericality: { only_integer: true }, allow_blank: true
 
     def self.report_abducted
-        (Survivor.where(abducted: true).size / Survivor.all.size) * 100
-      end
-    
-      def self.report_non_abducted
-        (Survivor.where(abducted: false).size / Survivor.all.size) * 100
-      end
+    (Survivor.where(abducted: true).size / Survivor.all.size) * 100
+  end
 
-    end
+  def self.report_non_abducted
+    (Survivor.where(abducted: false).size / Survivor.all.size) * 100
+  end
+end

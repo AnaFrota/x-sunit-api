@@ -50,14 +50,6 @@ module V1
         render json: { status: 'SUCCESS', data: Survivor.order(:name) }, status: :ok
       end
 
-      def report_abduction
-        @report = @survivor.reporting(params[:id_rep])
-        if @report
-          render json: { status: 'SUCCESS', message: 'Report received' }, status: :ok
-        else
-          render json: { status: 'ERROR', message: 'You cant report this survivor' }, status: :unprocessable_entity
-        end
-      end
 
       private
 
