@@ -6,8 +6,8 @@ class CreateSurvivors < ActiveRecord::Migration[5.2]
       t.string :gender
       t.float :latitude
       t.float :longitude
-      t.integer :reports
-      t.boolean :abducted
+      t.integer :reports_received, default: 0
+      t.boolean :abducted, default: false
 
       t.timestamps
     end
